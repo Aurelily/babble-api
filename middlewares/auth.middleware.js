@@ -1,21 +1,25 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
+  if (!req.headers["authorization"])
+    return res
+      .status(401)
+      .send({ status: 401, error: true, message: "Unauthorized access 1." });
+  const authHeader = req.headers["authorization"];
+  const token = authHeader.split(" ")[1];
+
   try {
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userData = decoded;
-    if (req.userData.isAdmin) {
-      next();
-    } else {
-      return res.status(401).json({
-        message: "Auth failed",
-      });
-    }
+    const decoded = await jwt.verifyAsync(token, process.env.JWT_SECRET);
+    req.decoded = decoded;
+    req.userId = decoded.userId;
+    req.email = decoded.email;
+    req.isAdmin = decoded.isAdmin;
+    next();
   } catch (error) {
-    return res.status(401).json({
-      message: "Auth failed",
-    });
+    console.log(token);
+    return res
+      .status(401)
+      .send({ status: 401, error: true, message: "Unauthorized access 2." });
   }
 };

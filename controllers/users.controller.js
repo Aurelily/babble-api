@@ -1,21 +1,47 @@
-const User = require("../models/users.model");
 const UserService = require("../services/users.services");
-const {
-  updateUser,
-  deleteUser,
-  getUser,
-} = require("../services/users.services");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
-const config = require("../config/config.json");
 require("dotenv").config();
 
-// Import des librairies necessaire pour encrypter le mot de passe
-const bcrypt = require("bcrypt");
-const saltRounds = 10;
+//-----------------------------------------------------------------
+// GET users/ - Retourne tous les utilisateur dans une liste avec nom et prénom (User Connecté + admin)
+//-----------------------------------------------------------------
+exports.getUsers = async function (req, res, next) {
+  // Validate request parameters, queries using express-validator
+  const page = req.query.page ? req.query.page : 0;
+  const limit = req.query.limit ? req.query.limit : 10;
+  const query = req.query.query;
+  try {
+    let users = await UserService.getUsers(query, page, limit);
+    return res.status(200).json({
+      status: 200,
+      data: users,
+      message: "Successfully Users Retrieved",
+    });
+  } catch (e) {
+    return res.status(400).json({ status: 400, message: e.message });
+  }
+};
+
+//-----------------------------------------------------------------
+// GET users/details/:id - Retourne les détails d'un utilisateur : nom, prénom, email (User Connecté + admin)
+//-----------------------------------------------------------------
+exports.getUser = async function (req, res, next) {
+  const { id } = req.params;
+  try {
+    let user = await UserService.getUser(id);
+    return res.status(200).json({
+      status: 200,
+      data: user,
+      message: "Successfully User Retrieved",
+    });
+  } catch (e) {
+    return res.status(400).json({ status: 400, message: e.message });
+  }
+};
 
 //-----------------------------------
-// Enregistrement d'un utilisateur
+// POST users/register - Enregistrement d'un utilisateur (User non connecté)
 //-----------------------------------
 
 exports.register = async function (req, res) {
@@ -27,20 +53,7 @@ exports.register = async function (req, res) {
           "Your password must contains at least minimum 8 character, 1 lowercase, 1 uppercase, 1 number and 1 symbols",
       });
     let user = await UserService.createUser(req.body);
-    user.token = jwt.sign(
-      { user_id: user._id, email: user.email },
-      config.secret,
-      { expiresIn: "1d" }
-    );
-    user.refresh_token = jwt.sign(
-      {
-        user_id: user._id,
-        email: user.email,
-      },
-      config.refreshTokenSecret,
-      { expiresIn: "7d" }
-    );
-    await user.update({ token: user.token, refresh_token: user.refresh_token });
+
     return res
       .status(200)
       .json({ status: 200, data: user, message: "User Successfully register" });
@@ -52,25 +65,27 @@ exports.register = async function (req, res) {
 };
 
 //-----------------------------------
-// Login d'un utilisateur
+// POST users/login - Login d'un utilisateur (User non connecté)
 //-----------------------------------
 
 exports.login = async function (req, res) {
   try {
-    let user = await UserService.getUser({ email: req.body.email });
+    let user = await UserService.getUserByEmail(req.body.email);
+    console.log(user);
     if (await user.comparePassword(req.body.password)) {
       // save user token
       user.token = jwt.sign(
-        { user_id: user._id, email: user.email },
-        config.secret,
+        { userId: user._id, email: user.email, isAdmin: user.isAdmin },
+        process.env.JWT_SECRET,
         { expiresIn: "1d" }
       );
       user.refresh_token = jwt.sign(
         {
-          user_id: user._id,
+          userId: user._id,
           email: user.email,
+          isAdmin: user.isAdmin,
         },
-        config.refreshTokenSecret,
+        process.env.JWT_REFRESH_TOKEN,
         { expiresIn: "7d" }
       );
       user.update({ token: user.token, refresh_token: user.refresh_token });
@@ -84,18 +99,18 @@ exports.login = async function (req, res) {
       .status(500)
       .json({ status: 400, message: "password is incorrect" });
   } catch (e) {
-    return res.status(500).json({ status: 400, message: e.message });
+    return res.status(400).json({ status: 400, message: e.message });
   }
 };
 
 //-----------------------------------
-// Update d'un utilisateur par son ID
+// PUT users/update/:id - Update d'un utilisateur par son ID (params) (Admin)
 //-----------------------------------
 exports.updateById = async function (req, res) {
   try {
     const { id } = req.params;
     const { firstname, lastname, email } = req.body;
-    let user = await updateUser(id, req.body);
+    let user = await UserService.updateUser(id, req.body);
     return res
       .status(200)
       .json({ status: 200, data: user, message: "User Successfully updated" });
@@ -105,16 +120,40 @@ exports.updateById = async function (req, res) {
 };
 
 //--------------------------------------
-// Supprimer un utilisateur par son ID
+// DELETE users/delete/:id - Supprimer un utilisateur par son ID (params) (Admin)
 //--------------------------------------
 
 exports.deleteUserById = async function (req, res) {
   try {
     const { id } = req.params;
-    let user = await deleteUser(query);
+    let user = await UserService.deleteUser(id);
     return res
       .status(200)
       .json({ status: 200, data: user, message: "User Successfully deleted" });
+  } catch (e) {
+    return res.status(500).json({ status: 400, message: e.message });
+  }
+};
+
+//-----------------------------------
+// PUT users/update/profil/ - Update de son profil connecté (via JWT) (Utilisateur connecté)
+//-----------------------------------
+exports.updateProfil = async function (req, res) {
+  try {
+    if (!req.body)
+      return res.status(400).json({ status: 400, message: "Invalid request" });
+
+    const token = req.headers.authorization;
+    const bearer = token.replace("Bearer ", "");
+    console.log(bearer);
+    const decoded = jwt.verify(bearer, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+
+    const { firstname, lastname, email } = req.body;
+    let user = await UserService.updateUser(userId, req.body);
+    return res
+      .status(200)
+      .json({ status: 200, data: user, message: "User Successfully updated" });
   } catch (e) {
     return res.status(500).json({ status: 400, message: e.message });
   }

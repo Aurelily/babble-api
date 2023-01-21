@@ -12,6 +12,7 @@ exports.createUser = async function (user) {
 exports.getUsers = async function (query, page, limit) {
   try {
     return await User.find(query)
+      .select("firstname lastname")
       .limit(limit)
       .skip(limit * page);
   } catch (e) {
@@ -23,16 +24,29 @@ exports.getUsers = async function (query, page, limit) {
 
 exports.getUser = async function (query) {
   try {
-    return await User.findOne(query);
+    return await User.findOne({ _id: query }).select(
+      "firstname lastname email"
+    );
   } catch (e) {
     // Log Errors
     throw Error("Error while getting user");
   }
 };
 
-exports.deleteUser = async function (query) {
+exports.getUserByEmail = async function (filter) {
   try {
-    return await User.findByIdAndDelete({ _id: query });
+    return await User.findOne({ email: filter }).select(
+      "firstname lastname email password isAdmin"
+    );
+  } catch (e) {
+    // Log Errors
+    throw Error("Error while getting user");
+  }
+};
+
+exports.deleteUser = async function (param) {
+  try {
+    return await User.findByIdAndDelete({ _id: param });
   } catch (e) {
     // Log Errors
     throw Error(e);
