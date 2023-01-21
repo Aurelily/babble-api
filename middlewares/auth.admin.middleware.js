@@ -15,7 +15,7 @@ module.exports = async (req, res, next) => {
     req.decoded = decoded;
     req.userId = decoded.userId;
     req.email = decoded.email;
-    req.isAdmin = false;
+    req.isAdmin = true;
     next();
   } catch (error) {
     console.log(bearer);
