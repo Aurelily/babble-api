@@ -46,11 +46,25 @@ exports.getUser = async function (req, res, next) {
 
 exports.register = async function (req, res) {
   try {
+    let userTest = await UserService.getUserByEmail(req.body.email);
+    if (userTest) {
+      return res.status(409).json({
+        status: 409,
+        message: "This email already has an account.",
+      });
+    }
+
     if (!validator.isStrongPassword(req.body.password))
       return res.status(500).json({
         status: 500,
         message:
           "Your password must contains at least minimum 8 character, 1 lowercase, 1 uppercase, 1 number and 1 symbols",
+      });
+
+    if (!validator.isEmail(req.body.email))
+      return res.status(500).json({
+        status: 500,
+        message: "Email is not a valid format !",
       });
     let user = await UserService.createUser(req.body);
 
@@ -93,6 +107,11 @@ exports.login = async function (req, res) {
         status: 200,
         data: user,
         message: "User Successfully logged in",
+      });
+    } else if (user.comparePassword(req.body.password) == null) {
+      return res.status(400).json({
+        status: 400,
+        message: "Login or password incorrect",
       });
     }
     return res

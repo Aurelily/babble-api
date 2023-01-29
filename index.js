@@ -1,5 +1,9 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
+//Cette ligne fait bénifier de CORS à toutes les requêtes de notre serveur
+app.use(cors());
+
 const router = require("./routes/routes");
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", true); // Supprime le warning de deprecation
