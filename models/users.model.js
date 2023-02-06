@@ -32,10 +32,15 @@ const userSchema = new Schema({
     required: true,
     default: false,
   },
+  avatar: Object,
+  avatarPath: {
+    type: mongoose.Schema.Types.Mixed,
+    default: "./images/avatar-default.jpg",
+  },
   token: String,
   refresh_token: String,
 
-  // Le isOline sera géré via le web socket
+  // Le isOnline sera géré via le web socket
   /*   isOnline: {
     type: Boolean,
     required: true,
