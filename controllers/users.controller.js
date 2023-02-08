@@ -46,26 +46,6 @@ exports.getUser = async function (req, res, next) {
 
 exports.register = async function (req, res) {
   try {
-    let userTest = await UserService.getUserByEmail(req.body.email);
-    if (userTest) {
-      return res.status(409).json({
-        status: 409,
-        message: "This email already has an account.",
-      });
-    }
-
-    if (!validator.isStrongPassword(req.body.password))
-      return res.status(500).json({
-        status: 500,
-        message:
-          "Your password must contains at least minimum 8 character, 1 lowercase, 1 uppercase, 1 number and 1 symbols",
-      });
-
-    if (!validator.isEmail(req.body.email))
-      return res.status(500).json({
-        status: 500,
-        message: "Email is not a valid format !",
-      });
     let user = await UserService.createUser(req.body);
 
     return res
