@@ -45,17 +45,14 @@ exports.getUser = async function (req, res, next) {
 //-----------------------------------
 
 exports.upload = async function (req, res) {
-  const path = req.avatarPath;
-  try {
-    let user = await UserService.uploadAvatar(path);
-    console.log(path);
-    return res
-      .status(200)
-      .json({ status: 200, data: user, message: "Avatar Successfully upload" });
-  } catch (e) {
-    console.log(e);
-    return res.status(500).json({ status: 500, message: e.message });
+  console.log(req.body.file);
+  console.log(req.body);
+  const img = req.body.image;
+  if (!img) {
+    console.log("no image");
   }
+
+  res.send({ congrats: "data recieved CONT" });
 };
 
 //-----------------------------------
