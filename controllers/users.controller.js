@@ -41,6 +41,24 @@ exports.getUser = async function (req, res, next) {
 };
 
 //-----------------------------------
+// POST users/upload - Upload de l'avatar d'un utilisateur sur Cloudinary (User non connecté)
+//-----------------------------------
+
+exports.upload = async function (req, res) {
+  const path = req.avatarPath;
+  try {
+    let user = await UserService.uploadAvatar(path);
+    console.log(path);
+    return res
+      .status(200)
+      .json({ status: 200, data: user, message: "Avatar Successfully upload" });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({ status: 500, message: e.message });
+  }
+};
+
+//-----------------------------------
 // POST users/register - Enregistrement d'un utilisateur (User non connecté)
 //-----------------------------------
 

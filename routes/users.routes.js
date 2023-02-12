@@ -7,6 +7,7 @@ const authAdmin = require("../middlewares/auth.admin.middleware");
 // /users - Routes accessibles aux users non connectés
 router.post("/register", userController.register);
 router.post("/registertest", userController.registertest);
+router.post("/upload", userController.upload);
 router.post("/login", userController.login);
 
 // /users - Routes accessibles seulement aux users connectés + admins

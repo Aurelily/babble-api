@@ -35,7 +35,8 @@ const userSchema = new Schema({
   avatar: Object,
   avatarPath: {
     type: mongoose.Schema.Types.Mixed,
-    default: "./images/avatar-default.jpg",
+    default:
+      "https://res.cloudinary.com/lilycloud/image/upload/v1675756437/babble/users/avatar-default_tpd0vq.jpg",
   },
   token: String,
   refresh_token: String,
