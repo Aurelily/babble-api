@@ -1,5 +1,14 @@
 const User = require("../models/users.model");
 
+exports.UploadAvatar = async function (req, res) {
+  try {
+    return await User.create(user);
+  } catch (e) {
+    // Log Errors
+    throw Error("Error while creating user: " + e);
+  }
+};
+
 exports.createUser = async function (user) {
   try {
     return await User.create(user);

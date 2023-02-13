@@ -32,7 +32,7 @@ const userSchema = new Schema({
     required: true,
     default: false,
   },
-  avatar: Object,
+  /*  avatar: Object, */
   avatarPath: {
     type: mongoose.Schema.Types.Mixed,
     default:

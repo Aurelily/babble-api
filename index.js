@@ -3,6 +3,8 @@ const cors = require("cors");
 const app = express();
 //Cette ligne fait bénifier de CORS à toutes les requêtes de notre serveur
 app.use(cors());
+const multer = require("multer");
+const upload = multer();
 
 const router = require("./routes/routes");
 const mongoose = require("mongoose");
@@ -15,6 +17,10 @@ require("./config/database");
 // et pour encoder le contenu et bien gérer les accents
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// for parsing multipart/form-data
+app.use(upload.array());
+app.use(express.static("public"));
 
 // Router
 
