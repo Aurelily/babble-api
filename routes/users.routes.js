@@ -7,7 +7,6 @@ const multer = require("../middlewares/multer.middleware");
 
 // /users - Routes accessibles aux users non connectés
 router.post("/register", userController.register);
-router.post("/registertest", userController.registertest);
 router.post("/upload", multer, userController.upload);
 router.post("/login", userController.login);
 
