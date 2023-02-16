@@ -1,6 +1,8 @@
 const UserService = require("../services/users.services");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+
 require("dotenv").config();
 
 //-----------------------------------------------------------------
@@ -82,6 +84,7 @@ exports.register = async function (req, res) {
         status: 500,
         message: "Email is not a valid format !",
       });
+
     let user = await UserService.createUser(req.body);
 
     return res
@@ -180,12 +183,25 @@ exports.updateProfil = async function (req, res) {
 
     const token = req.headers.authorization;
     const bearer = token.replace("Bearer ", "");
-    console.log(bearer);
+    /*  console.log(bearer); */
     const decoded = jwt.verify(bearer, process.env.JWT_SECRET);
     const userId = decoded.userId;
 
-    const { firstname, lastname, email } = req.body;
+    if (!validator.isStrongPassword(req.body.password))
+      return res.status(500).json({
+        status: 500,
+        message:
+          "Your password must contains at least minimum 8 character, 1 lowercase, 1 uppercase, 1 number and 1 symbols",
+      });
+
+    if (!validator.isEmail(req.body.email))
+      return res.status(500).json({
+        status: 500,
+        message: "Email is not a valid format !",
+      });
+
     let user = await UserService.updateUser(userId, req.body);
+
     return res
       .status(200)
       .json({ status: 200, data: user, message: "User Successfully updated" });

@@ -1,4 +1,5 @@
 const User = require("../models/users.model");
+const bcrypt = require("bcrypt");
 
 exports.UploadAvatar = async function (req, res) {
   try {
@@ -11,6 +12,10 @@ exports.UploadAvatar = async function (req, res) {
 
 exports.createUser = async function (user) {
   try {
+    let newUser = new User({ user });
+    let hashedPassword = await newUser.createHash(user.password);
+    user.password = hashedPassword;
+
     return await User.create(user);
   } catch (e) {
     // Log Errors
@@ -49,7 +54,7 @@ exports.getUserByEmail = async function (filter) {
     );
   } catch (e) {
     // Log Errors
-    throw Error("Error while getting user");
+    throw Error(e);
   }
 };
 
@@ -64,9 +69,13 @@ exports.deleteUser = async function (param) {
 
 exports.updateUser = async function (query, body) {
   try {
+    let newUser = new User({ body });
+    let hashedPassword = await newUser.createHash(body.password);
+    body.password = hashedPassword;
+
     return await User.findOneAndUpdate({ _id: query }, body, { new: true });
   } catch (e) {
     // Log Errors
-    throw Error("Error while updating user");
+    throw Error(e);
   }
 };
