@@ -183,9 +183,17 @@ exports.updateProfil = async function (req, res) {
 
     const token = req.headers.authorization;
     const bearer = token.replace("Bearer ", "");
-    /*  console.log(bearer); */
+    console.log(bearer);
     const decoded = jwt.verify(bearer, process.env.JWT_SECRET);
     const userId = decoded.userId;
+
+    let userTest = await UserService.getUserByEmail(req.body.email);
+    if (userTest && req.body.email !== userTest.email) {
+      return res.status(409).json({
+        status: 409,
+        message: "This email already has an account.",
+      });
+    }
 
     if (!validator.isStrongPassword(req.body.password))
       return res.status(500).json({

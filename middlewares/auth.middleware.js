@@ -2,14 +2,15 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 module.exports = async (req, res, next) => {
+  console.log(req.headers);
   if (!req.headers["authorization"])
     return res
-      .status(401)
-      .send({ status: 401, error: true, message: "Unauthorized access 1." });
+      .status(403)
+      .send({ status: 403, error: true, message: "Unauthorized access 1." });
 
   const token = req.headers.authorization;
   const bearer = token.replace("Bearer ", "");
-
+  console.log("Ici");
   try {
     const decoded = await jwt.verify(bearer, process.env.JWT_SECRET);
     req.decoded = decoded;
@@ -18,9 +19,9 @@ module.exports = async (req, res, next) => {
     req.isAdmin = false;
     next();
   } catch (error) {
-    console.log(bearer);
+    console.log("Test2222");
     return res
-      .status(401)
-      .send({ status: 401, error: true, message: "Unauthorized access 2." });
+      .status(403)
+      .send({ status: 403, error: true, message: "Unauthorized access 2." });
   }
 };
