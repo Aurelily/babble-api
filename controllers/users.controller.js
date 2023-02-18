@@ -108,19 +108,20 @@ exports.login = async function (req, res) {
     if (await user.comparePassword(req.body.password)) {
       // save user token
       user.token = jwt.sign(
-        { userId: user._id, email: user.email, isAdmin: user.isAdmin },
+        { userId: user._id, /* email: user.email, */ isAdmin: user.isAdmin },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
       );
       user.refresh_token = jwt.sign(
         {
           userId: user._id,
-          email: user.email,
+          /*  email: user.email, */
           isAdmin: user.isAdmin,
         },
         process.env.JWT_REFRESH_TOKEN,
         { expiresIn: "7d" }
       );
+
       user.update({ token: user.token, refresh_token: user.refresh_token });
       return res.status(200).json({
         status: 200,
@@ -181,14 +182,10 @@ exports.updateProfil = async function (req, res) {
     if (!req.body)
       return res.status(400).json({ status: 400, message: "Invalid request" });
 
-    const token = req.headers.authorization;
-    const bearer = token.replace("Bearer ", "");
-    console.log(bearer);
-    const decoded = jwt.verify(bearer, process.env.JWT_SECRET);
-    const userId = decoded.userId;
-
+    let userConnected = await UserService.getUser(req.body._id);
     let userTest = await UserService.getUserByEmail(req.body.email);
-    if (userTest && req.body.email !== userTest.email) {
+
+    if (userTest && req.body.email !== userConnected.email) {
       return res.status(409).json({
         status: 409,
         message: "This email already has an account.",
@@ -208,7 +205,7 @@ exports.updateProfil = async function (req, res) {
         message: "Email is not a valid format !",
       });
 
-    let user = await UserService.updateUser(userId, req.body);
+    let user = await UserService.updateUser(userConnected._id, req.body);
 
     return res
       .status(200)
