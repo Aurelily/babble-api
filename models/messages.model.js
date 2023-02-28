@@ -1,7 +1,12 @@
 const mongoose = require("mongoose");
 const Users = require("./users.model");
+const Rooms = require("./rooms.model");
 
 const messageSchema = mongoose.Schema({
+  id_room: {
+    type: mongoose.Types.ObjectId,
+    ref: Rooms,
+  },
   content: {
     type: String,
     required: true,
@@ -9,7 +14,7 @@ const messageSchema = mongoose.Schema({
     minlength: 1,
     maxlength: 240,
   },
-  author: {
+  id_author: {
     type: mongoose.Types.ObjectId,
     ref: Users,
   },

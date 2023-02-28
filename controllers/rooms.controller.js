@@ -4,9 +4,9 @@ require("dotenv").config();
 //-----------------------------------------------------------------
 // GET rooms/ - Retourne toutes les rooms du channel général dans une liste (User Connecté + admin)
 //-----------------------------------------------------------------
-exports.getRooms = async function (req, res, next) {
-  // Validate request parameters, queries using express-validator
+exports.getRooms = async function (req, res) {
   const query = req.query.query;
+  console.log(query);
   try {
     let messages = await RoomService.getRooms(query);
     return res.status(200).json({
