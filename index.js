@@ -1,4 +1,5 @@
 const express = require("express");
+
 const cors = require("cors");
 const app = express();
 //Cette ligne fait bénifier de CORS à toutes les requêtes de notre serveur
@@ -25,8 +26,41 @@ app.use(express.urlencoded({ extended: true }));
 app.use(upload.array());
 app.use(express.static("public"));
 
+//http pour socket.io
+const http = require("http").Server(app);
+
+//👇🏻 SocketIO
+const socketIO = require("socket.io")(http, {
+  cors: {
+    origin: "<http://localhost:3000>",
+  },
+});
+
 // pour utiliser Morgan
 app.use(morgan("tiny"));
+
+//👇🏻 Add this before the app.get() block
+
+// Generates random string as the ID
+const generateID = () => Math.random().toString(36).substring(2, 10);
+let chatRooms = [];
+
+socketIO.on("connection", (socket) => {
+  console.log(`⚡: ${socket.id} user just connected!`);
+
+  socket.on("createRoom", (roomName) => {
+    socket.join(roomName);
+    //👇🏻 Adds the new group name to the chat rooms array
+    chatRooms.unshift({ id: generateID(), roomName, messages: [] });
+    //👇🏻 Returns the updated chat rooms via another event
+    socket.emit("roomsList", chatRooms);
+  });
+
+  socket.on("disconnect", () => {
+    socket.disconnect();
+    console.log("🔥: A user disconnected");
+  });
+});
 
 // Router
 
