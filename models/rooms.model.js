@@ -9,7 +9,7 @@ const roomSchema = mongoose.Schema({
     trim: true,
   },
   messages: {
-    type: String,
+    type: Array,
     required: true,
     trim: true,
   },
