@@ -2,7 +2,7 @@ const MessageService = require("../services/messages.services");
 require("dotenv").config();
 
 //-----------------------------------------------------------------
-// GET messages/ - Retourne tous les messages du channel général dans une liste avec content, author et datePublished (User Connecté + admin)
+// GET messages/ - Retourne tous les messages du channel général dans une liste avec id_room, content, author et datePublished (User Connecté + admin)
 //-----------------------------------------------------------------
 exports.getMessages = async function (req, res, next) {
   // Validate request parameters, queries using express-validator

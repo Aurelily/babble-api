@@ -48,10 +48,10 @@ let chatRooms = [];
 socketIO.on("connection", (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
 
-  socket.on("createRoom", (roomName) => {
-    socket.join(roomName);
+  socket.on("create-room", (name) => {
+    socket.join(name);
     //👇🏻 Adds the new group name to the chat rooms array
-    chatRooms.unshift({ id: generateID(), roomName, messages: [] });
+    chatRooms.unshift({ id: generateID(), name, messages: [] });
     //👇🏻 Returns the updated chat rooms via another event
     socket.emit("roomsList", chatRooms);
   });
@@ -59,10 +59,12 @@ socketIO.on("connection", (socket) => {
   socket.on("findRoom", (id) => {
     //👇🏻 Filters the array by the ID
     let result = chatRooms.filter((room) => room.id == id);
-    console.log(chatRooms);
+    console.log(result);
     //👇🏻 Sends the messages to the app
-    socket.emit("foundRoom", result[0].messages);
-    console.log("Messages Form", result[0].messages);
+    /*    if (result[0].messages) {
+      socket.emit("foundRoom", result[0].messages);
+      console.log("Messages Form", result[0].messages);
+    } */
   });
 
   socket.on("newMessage", (data) => {
@@ -71,13 +73,13 @@ socketIO.on("connection", (socket) => {
 
     //👇🏻 Finds the room where the message was sent
     let result = chatRooms.filter((room) => room.id == room_id);
-
+    console.log(result);
     //👇🏻 Create the data structure for the message
     const newMessage = {
       id: generateID(),
-      text: message,
+      content: message,
       user,
-      time: `${timestamp.hour}:${timestamp.mins}`,
+      datePublished: `${timestamp.hour}:${timestamp.mins}`,
     };
     console.log("New Message", newMessage);
     //👇🏻 Updates the chatroom messages
@@ -100,4 +102,4 @@ socketIO.on("connection", (socket) => {
 router.router(app);
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server started on port ${port}`));
+http.listen(port, () => console.log(`Server started on port ${port}`));

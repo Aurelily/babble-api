@@ -12,7 +12,7 @@ exports.createMessage = async function (message) {
 exports.getMessages = async function (query, page, limit) {
   try {
     return await Message.find(query)
-      .select("content author datePublished")
+      .select("id_room content author datePublished")
       .populate("author")
       .limit(limit)
       .skip(limit * page);

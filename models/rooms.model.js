@@ -1,12 +1,15 @@
 const mongoose = require("mongoose");
 const Users = require("./users.model");
-const Messages = require("./messages.model");
 
 const roomSchema = mongoose.Schema({
   name: {
     type: String,
     required: true,
     trim: true,
+  },
+  creator: {
+    type: mongoose.Types.ObjectId,
+    ref: Users,
   },
   messages: {
     type: Array,

@@ -6,7 +6,7 @@ require("dotenv").config();
 //-----------------------------------------------------------------
 exports.getRooms = async function (req, res) {
   const query = req.query.query;
-  console.log(query);
+  /*   console.log(query); */
   try {
     let messages = await RoomService.getRooms(query);
     return res.status(200).json({
