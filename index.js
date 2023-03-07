@@ -6,6 +6,7 @@ const app = express();
 app.use(cors());
 //Morgan est un logger pour tracer dans la console les requetes http
 const morgan = require("morgan");
+require("dotenv").config();
 
 const multer = require("multer");
 const upload = multer();
@@ -26,13 +27,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(upload.array());
 app.use(express.static("public"));
 
+//Import pour fonctions
+const roomController = require("./controllers/rooms.controller");
+
 //http pour socket.io
 const http = require("http").Server(app);
 
 //👇🏻 SocketIO
 const socketIO = require("socket.io")(http, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://" + process.env.SERVER_IP + ":3000",
   },
 });
 
@@ -42,6 +46,7 @@ app.use(morgan("tiny"));
 //👇🏻 Add this before the app.get() block
 
 // Generates random string as the ID
+
 const generateID = () => Math.random().toString(36).substring(2, 10);
 let chatRooms = [];
 
@@ -49,7 +54,7 @@ socketIO.on("connection", (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
 
   socket.on("create-room", (name) => {
-    socket.join(name);
+    /*  socket.join(name); */
     //👇🏻 Adds the new group name to the chat rooms array
     chatRooms.unshift({ id: generateID(), name, messages: [] });
     //👇🏻 Returns the updated chat rooms via another event
@@ -68,6 +73,7 @@ socketIO.on("connection", (socket) => {
   });
 
   socket.on("newMessage", (data) => {
+    console.log("coucou3");
     //👇🏻 Destructures the property from the object
     const { room_id, message, user, timestamp } = data;
 

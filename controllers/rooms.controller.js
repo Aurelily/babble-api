@@ -8,10 +8,12 @@ exports.getRooms = async function (req, res) {
   const query = req.query.query;
   /*   console.log(query); */
   try {
-    let messages = await RoomService.getRooms(query);
+    let rooms = await RoomService.getRooms(query);
+    // sort rooms by creation date in descending order
+    rooms.sort((a, b) => b._id - a._id);
     return res.status(200).json({
       status: 200,
-      data: messages,
+      data: rooms,
       message: "Successfully Rooms Retrieved",
     });
   } catch (e) {

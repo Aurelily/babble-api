@@ -16,6 +16,11 @@ const roomSchema = mongoose.Schema({
     required: true,
     trim: true,
   },
+  dateCreation: {
+    type: Date,
+    required: true,
+    default: Date.now(),
+  },
 });
 
 const Room = mongoose.model("Room", roomSchema);
