@@ -43,36 +43,36 @@ const socketIO = require("socket.io")(http, {
 // pour utiliser Morgan
 app.use(morgan("tiny"));
 
-//👇🏻 Add this before the app.get() block
-
-// Generates random string as the ID
-
-const generateID = () => Math.random().toString(36).substring(2, 10);
-let chatRooms = [];
+//👇🏻 SOCKET.IO
 
 socketIO.on("connection", (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
 
-  socket.on("create-room", (name) => {
-    /*  socket.join(name); */
-    //👇🏻 Adds the new group name to the chat rooms array
-    chatRooms.unshift({ id: generateID(), name, messages: [] });
-    //👇🏻 Returns the updated chat rooms via another event
-    socket.emit("roomsList", chatRooms);
+  socket.on("disconnect", () => {
+    socket.disconnect();
+    console.log("🔥: A user disconnected");
   });
 
-  socket.on("findRoom", (id) => {
+  socket.on("create-room", (name) => {
+    console.log(`Un nouveau salon de discussion a été créé : ${name}.`);
+    //👇🏻 Returns the updated chat rooms via another event
+    socket.emit("roomsList", () => {
+      console.log("Back : Mise à jour de la liste de rooms");
+    });
+  });
+
+  /* socket.on("findRoom", (id) => {
     //👇🏻 Filters the array by the ID
     let result = chatRooms.filter((room) => room.id == id);
     console.log(result);
     //👇🏻 Sends the messages to the app
-    /*    if (result[0].messages) {
+    if (result[0].messages) {
       socket.emit("foundRoom", result[0].messages);
       console.log("Messages Form", result[0].messages);
-    } */
-  });
+    } 
+  }); */
 
-  socket.on("newMessage", (data) => {
+  /*   socket.on("newMessage", (data) => {
     console.log("coucou3");
     //👇🏻 Destructures the property from the object
     const { room_id, message, user, timestamp } = data;
@@ -95,12 +95,7 @@ socketIO.on("connection", (socket) => {
     //👇🏻 Trigger the events to reflect the new changes
     socket.emit("roomsList", chatRooms);
     socket.emit("foundRoom", result[0].messages);
-  });
-
-  socket.on("disconnect", () => {
-    socket.disconnect();
-    console.log("🔥: A user disconnected");
-  });
+  }); */
 });
 
 // Router
