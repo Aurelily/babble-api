@@ -2,12 +2,26 @@ const express = require("express");
 
 const cors = require("cors");
 const app = express();
+
+//http pour socket.io
+const http = require("http").Server(app);
+
+//👇🏻 SocketIO
+const socketIO = require("socket.io")(http, {
+  cors: {
+    origin: "http://" + process.env.SERVER_IP + ":3000",
+  },
+});
+
+module.exports = socketIO;
+
 //Cette ligne fait bénifier de CORS à toutes les requêtes de notre serveur
 app.use(cors());
 //Morgan est un logger pour tracer dans la console les requetes http
 const morgan = require("morgan");
 require("dotenv").config();
 
+//TODO : Pour l'upload d'images
 const multer = require("multer");
 const upload = multer();
 
@@ -27,23 +41,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(upload.array());
 app.use(express.static("public"));
 
-//Import pour fonctions
-const roomController = require("./controllers/rooms.controller");
-
-//http pour socket.io
-const http = require("http").Server(app);
-
-//👇🏻 SocketIO
-const socketIO = require("socket.io")(http, {
-  cors: {
-    origin: "http://" + process.env.SERVER_IP + ":3000",
-  },
-});
-
 // pour utiliser Morgan
 app.use(morgan("tiny"));
 
 //👇🏻 SOCKET.IO
+/* const generateID = () => Math.random().toString(36).substring(2, 10);
+let chatRooms = []; */
 
 socketIO.on("connection", (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
@@ -53,13 +56,27 @@ socketIO.on("connection", (socket) => {
     console.log("🔥: A user disconnected");
   });
 
-  socket.on("create-room", (name) => {
+  /*   socket.on("createRoom", async (name) => {
+    try {
+      let room = await roomController.createRoom({
+        body: {
+          name: name,
+          creator: "userInfos._id",
+          message: [],
+        },
+      });
+      socket.emit("roomsList", room);
+    } catch (e) {
+      console.log(e);
+    }
+  }); */
+
+  /*   socket.on("create-room", (name) => {
     console.log(`Un nouveau salon de discussion a été créé : ${name}.`);
     //👇🏻 Returns the updated chat rooms via another event
-    socket.emit("roomsList", () => {
-      console.log("Back : Mise à jour de la liste de rooms");
-    });
-  });
+    chatRooms.unshift({ id: generateID(), name, messages: [] });
+    socket.emit("roomsList", chatRooms);
+  }); */
 
   /* socket.on("findRoom", (id) => {
     //👇🏻 Filters the array by the ID
@@ -104,3 +121,5 @@ router.router(app);
 
 const port = process.env.PORT || 3000;
 http.listen(port, () => console.log(`Server started on port ${port}`));
+
+module.exports = { socketIO };

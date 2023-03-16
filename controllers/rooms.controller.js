@@ -1,6 +1,9 @@
 const RoomService = require("../services/rooms.services");
 require("dotenv").config();
 
+//Pour utiliser les emit de socket coté serveur
+const socketIO = require("../index");
+
 //-----------------------------------------------------------------
 // GET rooms/ - Retourne toutes les rooms du channel général dans une liste (User Connecté + admin)
 //-----------------------------------------------------------------
@@ -28,6 +31,7 @@ exports.getRooms = async function (req, res) {
 exports.createRoom = async function (req, res) {
   try {
     let room = await RoomService.createRoom(req.body);
+    socketIO.emit("newRoom", room);
     return res.status(200).json({
       status: 200,
       data: room,
