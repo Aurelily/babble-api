@@ -5,6 +5,7 @@ const auth = require("../middlewares/auth.middleware");
 
 // /rooms - Routes accessibles seulement aux users connectés + admins
 router.get("/", roomController.getRooms);
+router.get("/details/:id", roomController.getRoom);
 router.post("/post", roomController.createRoom);
 
 /* // /rooms - Routes accessibles seulement aux admins

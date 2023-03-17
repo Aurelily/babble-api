@@ -24,6 +24,23 @@ exports.getRooms = async function (req, res) {
   }
 };
 
+//-----------------------------------------------------------------
+// GET rooms/details/:id - Retourne les détails d'une room : id, name, creator, messages, dateCreation (User Connecté + admin)
+//-----------------------------------------------------------------
+exports.getRoom = async function (req, res, next) {
+  const { id } = req.params;
+  try {
+    let room = await UserService.getRoom(id);
+    return res.status(200).json({
+      status: 200,
+      data: room,
+      message: "Successfully Room Retrieved",
+    });
+  } catch (e) {
+    return res.status(400).json({ status: 400, message: e.message });
+  }
+};
+
 //-----------------------------------
 // POST rooms/create - Création d'un message dans le chat général (User connecté)
 //-----------------------------------

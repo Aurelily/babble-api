@@ -1,12 +1,11 @@
 const express = require("express");
-
 const cors = require("cors");
 const app = express();
 
-//http pour socket.io
+// Server
 const http = require("http").Server(app);
 
-//👇🏻 SocketIO
+// SocketIO
 const socketIO = require("socket.io")(http, {
   cors: {
     origin: "http://" + process.env.SERVER_IP + ":3000",
@@ -15,25 +14,29 @@ const socketIO = require("socket.io")(http, {
 
 module.exports = socketIO;
 
-//Cette ligne fait bénifier de CORS à toutes les requêtes de notre serveur
+// This line benefits from "Cors" to all the requests of our server
 app.use(cors());
-//Morgan est un logger pour tracer dans la console les requetes http
+
+// Morgan is a logger to trace the http requests in the console
 const morgan = require("morgan");
+
+// Environment variables
 require("dotenv").config();
 
-//TODO : Pour l'upload d'images
+// TODO : Pour l'upload d'images
 const multer = require("multer");
 const upload = multer();
 
 const router = require("./routes/routes");
 const mongoose = require("mongoose");
-mongoose.set("strictQuery", true); // Supprime le warning de deprecation
+// Removes the Deprecation warning
+mongoose.set("strictQuery", true);
 
-// Connection a la base de donnée
+// Database connection
 require("./config/database");
 
-// Config de base de express pour dire que l'on utilisera du JSON pour le passage et la récup de paramètres
-// et pour encoder le contenu et bien gérer les accents
+// Express basic config to say that we will use JSON for passage and parameter recovery
+// ... and for encoding content and management of accents
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -41,12 +44,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(upload.array());
 app.use(express.static("public"));
 
-// pour utiliser Morgan
+// to use Morgan in tiny version
 app.use(morgan("tiny"));
 
-//👇🏻 SOCKET.IO
-/* const generateID = () => Math.random().toString(36).substring(2, 10);
-let chatRooms = []; */
+// SOCKET.IO
 
 socketIO.on("connection", (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
@@ -55,28 +56,6 @@ socketIO.on("connection", (socket) => {
     socket.disconnect();
     console.log("🔥: A user disconnected");
   });
-
-  /*   socket.on("createRoom", async (name) => {
-    try {
-      let room = await roomController.createRoom({
-        body: {
-          name: name,
-          creator: "userInfos._id",
-          message: [],
-        },
-      });
-      socket.emit("roomsList", room);
-    } catch (e) {
-      console.log(e);
-    }
-  }); */
-
-  /*   socket.on("create-room", (name) => {
-    console.log(`Un nouveau salon de discussion a été créé : ${name}.`);
-    //👇🏻 Returns the updated chat rooms via another event
-    chatRooms.unshift({ id: generateID(), name, messages: [] });
-    socket.emit("roomsList", chatRooms);
-  }); */
 
   /* socket.on("findRoom", (id) => {
     //👇🏻 Filters the array by the ID

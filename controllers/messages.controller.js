@@ -1,6 +1,9 @@
 const MessageService = require("../services/messages.services");
 require("dotenv").config();
 
+//Pour utiliser les emit de socket coté serveur
+const socketIO = require("../index");
+
 //-----------------------------------------------------------------
 // GET messages/ - Retourne tous les messages du channel général dans une liste avec id_room, content, author et datePublished (User Connecté + admin)
 //-----------------------------------------------------------------
@@ -28,6 +31,7 @@ exports.getMessages = async function (req, res, next) {
 exports.postMessage = async function (req, res) {
   try {
     let message = await MessageService.createMessage(req.body);
+    socketIO.emit("newMessage", message);
     return res.status(200).json({
       status: 200,
       data: message,
