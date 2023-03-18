@@ -30,7 +30,7 @@ exports.getRooms = async function (req, res) {
 exports.getRoom = async function (req, res, next) {
   const { id } = req.params;
   try {
-    let room = await UserService.getRoom(id);
+    let room = await RoomService.getRoom(id);
     return res.status(200).json({
       status: 200,
       data: room,
