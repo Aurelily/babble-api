@@ -5,6 +5,7 @@ const auth = require("../middlewares/auth.middleware");
 
 // /messages - Routes accessibles seulement aux users connectés + admins
 router.get("/", messageController.getMessages);
+router.get("/room/:id", messageController.getMessagesByRoomId);
 router.post("/post", messageController.postMessage);
 
 // /messages - Routes accessibles seulement aux admins

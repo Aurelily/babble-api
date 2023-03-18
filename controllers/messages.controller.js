@@ -45,6 +45,24 @@ exports.postMessage = async function (req, res) {
 };
 
 //--------------------------------------
+// GET messages/:roomId - Supprimer un message par son ID (params) (Admin)
+//--------------------------------------
+
+exports.getMessagesByRoomId = async function (req, res) {
+  try {
+    const { id } = req.params;
+    let messages = await MessageService.getMessagesByRoomId(id);
+    return res.status(200).json({
+      status: 200,
+      data: messages,
+      message: "Message Successfully retrived for this room",
+    });
+  } catch (e) {
+    return res.status(500).json({ status: 400, message: e.message });
+  }
+};
+
+//--------------------------------------
 // DELETE messages/delete/:id - Supprimer un message par son ID (params) (Admin)
 //--------------------------------------
 
