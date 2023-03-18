@@ -11,7 +11,9 @@ exports.createRoom = async function (room) {
 
 exports.getRooms = async function (query) {
   try {
-    return await Rooms.find(query).select("name messages").populate("messages");
+    return await Rooms.find(query)
+      .select("name creator dateCreation")
+      .populate("creator");
   } catch (e) {
     // Log Errors
     console.log(e);

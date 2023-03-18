@@ -11,11 +11,7 @@ const roomSchema = mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: Users,
   },
-  messages: {
-    type: Array,
-    required: true,
-    trim: true,
-  },
+
   dateCreation: {
     type: Date,
     required: true,

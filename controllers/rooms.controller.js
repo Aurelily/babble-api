@@ -13,7 +13,7 @@ exports.getRooms = async function (req, res) {
   try {
     let rooms = await RoomService.getRooms(query);
     // sort rooms by creation date in descending order
-    rooms.sort((a, b) => b._id - a._id);
+    /*  rooms.sort((a, b) => b.dateCreation - a.dateCreation); */
     return res.status(200).json({
       status: 200,
       data: rooms,
