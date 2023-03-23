@@ -1,4 +1,5 @@
 const RoomService = require("../services/rooms.services");
+const UserService = require("../services/users.services");
 require("dotenv").config();
 
 //Pour utiliser les emit de socket coté serveur
@@ -13,7 +14,7 @@ exports.getRooms = async function (req, res) {
   try {
     let rooms = await RoomService.getRooms(query);
     // sort rooms by creation date in descending order
-    /*  rooms.sort((a, b) => b.dateCreation - a.dateCreation); */
+    rooms.sort((a, b) => b.dateCreation - a.dateCreation);
     return res.status(200).json({
       status: 200,
       data: rooms,
@@ -42,21 +43,21 @@ exports.getRoom = async function (req, res, next) {
 };
 
 //-----------------------------------
-// POST rooms/create - Création d'un message dans le chat général (User connecté)
+// POST rooms/post - Création d'un message dans le chat général (User connecté)
 //-----------------------------------
 
 exports.createRoom = async function (req, res) {
   try {
     let room = await RoomService.createRoom(req.body);
+    let creator = await UserService.getUser(req.body.creator);
     socketIO.emit("newRoom", room);
+    socketIO.emit("newCreator", creator);
     return res.status(200).json({
       status: 200,
       data: room,
       message: "Room Successfully create",
     });
   } catch (e) {
-    console.log(req.body);
-    console.log(e);
     return res.status(500).json({ status: 400, message: e.message });
   }
 };
