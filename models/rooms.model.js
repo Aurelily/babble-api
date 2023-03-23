@@ -14,8 +14,7 @@ const roomSchema = mongoose.Schema({
 
   dateCreation: {
     type: Date,
-    required: true,
-    default: Date.now(),
+    default: Date.now,
   },
 });
 
