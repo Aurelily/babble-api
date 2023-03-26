@@ -16,6 +16,10 @@ const roomSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  private: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Room = mongoose.model("Room", roomSchema);
