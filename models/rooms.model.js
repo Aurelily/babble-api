@@ -20,6 +20,10 @@ const roomSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  signal: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const Room = mongoose.model("Room", roomSchema);
