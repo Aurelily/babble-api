@@ -1,5 +1,6 @@
 const MessageService = require("../services/messages.services");
 require("dotenv").config();
+const UserService = require("../services/users.services");
 
 //Pour utiliser les emit de socket coté serveur
 const socketIO = require("../index");
@@ -31,7 +32,9 @@ exports.getMessages = async function (req, res, next) {
 exports.postMessage = async function (req, res) {
   try {
     let message = await MessageService.createMessage(req.body);
+    let messageAuthor = await UserService.getUser(req.body.id_author);
     socketIO.emit("newMessage", message);
+    socketIO.emit("newMessageAuthor", messageAuthor);
     return res.status(200).json({
       status: 200,
       data: message,

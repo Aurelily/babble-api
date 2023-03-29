@@ -13,7 +13,7 @@ exports.getMessages = async function (query, page, limit) {
   try {
     return await Message.find(query)
       .select("id_room content id_author datePublished")
-      .populate("id_author")
+      .populate("id_author", "firstname")
       .limit(limit)
       .skip(limit * page);
   } catch (e) {
@@ -27,7 +27,7 @@ exports.getMessagesByRoomId = async function (param) {
   try {
     return await Message.find({ id_room: param })
       .select("content id_author datePublished")
-      .populate("id_author");
+      .populate("id_author", "firstname");
   } catch (e) {
     // Log Errors
     throw Error("Error while getting messages for this room");
@@ -38,10 +38,10 @@ exports.getMessage = async function (query) {
   try {
     return await Message.findOne({ _id: query })
       .select("id_room content id_author datePublished")
-      .populate("id_author");
+      .populate("id_author", "firstname");
   } catch (e) {
     // Log Errors
-    throw Error("Error while getting user");
+    throw Error("Error while getting message");
   }
 };
 
