@@ -31,3 +31,12 @@ exports.getRoom = async function (query) {
     throw Error("Error while getting room infos");
   }
 };
+
+exports.deleteRoom = async function (param) {
+  try {
+    return await Rooms.findByIdAndDelete({ _id: param });
+  } catch (e) {
+    // Log Errors
+    throw Error(e);
+  }
+};

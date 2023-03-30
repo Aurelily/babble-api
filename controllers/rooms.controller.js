@@ -61,3 +61,19 @@ exports.createRoom = async function (req, res) {
     return res.status(500).json({ status: 400, message: e.message });
   }
 };
+
+//--------------------------------------
+// DELETE rooms/delete/:id - Supprimer une room par son ID (params) (Utilisateur connecté et auteur)
+//--------------------------------------
+
+exports.deleteRoomById = async function (req, res) {
+  try {
+    const { id } = req.params;
+    let room = await RoomService.deleteRoom(id);
+    return res
+      .status(200)
+      .json({ status: 200, data: room, message: "Room Successfully deleted" });
+  } catch (e) {
+    return res.status(500).json({ status: 400, message: e.message });
+  }
+};
