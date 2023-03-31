@@ -1,4 +1,5 @@
 const Rooms = require("../models/rooms.model");
+const Messages = require("../models/messages.model");
 
 exports.createRoom = async function (room) {
   try {
@@ -42,6 +43,7 @@ exports.getRoom = async function (query) {
 
 exports.deleteRoom = async function (param) {
   try {
+    await Messages.deleteMany({ id_room: param });
     return await Rooms.findByIdAndDelete({ _id: param });
   } catch (e) {
     // Log Errors
