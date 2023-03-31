@@ -70,6 +70,7 @@ exports.deleteRoomById = async function (req, res) {
   try {
     const { id } = req.params;
     let room = await RoomService.deleteRoom(id);
+    socketIO.emit("deleteRoom", room);
     return res
       .status(200)
       .json({ status: 200, data: room, message: "Room Successfully deleted" });

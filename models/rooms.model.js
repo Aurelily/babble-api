@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const autopopulate = require("mongoose-autopopulate");
+
 const Users = require("./users.model");
 
 const roomSchema = mongoose.Schema({
@@ -9,7 +11,8 @@ const roomSchema = mongoose.Schema({
   },
   creator: {
     type: mongoose.Types.ObjectId,
-    ref: Users,
+    ref: "User",
+    autopopulate: true,
   },
 
   dateCreation: {
@@ -25,6 +28,8 @@ const roomSchema = mongoose.Schema({
     default: 0,
   },
 });
+
+roomSchema.plugin(autopopulate);
 
 const Room = mongoose.model("Room", roomSchema);
 
