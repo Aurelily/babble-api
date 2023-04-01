@@ -49,12 +49,21 @@ app.use(morgan("tiny"));
 
 // SOCKET.IO
 
+const activeSockets = [];
+
 socketIO.on("connection", (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
+  activeSockets.push(socket.id);
+  socket.emit("user connected", activeSockets);
 
   socket.on("disconnect", () => {
     socket.disconnect();
     console.log("🔥: A user disconnected");
+    const index = activeSockets.indexOf(socket.id);
+    if (index !== -1) {
+      activeSockets.splice(index, 1);
+      socket.emit("user disconnected", activeSockets);
+    }
   });
   //:JOIN:Client Supplied Room
   socket.on("subscribe", function (room) {
