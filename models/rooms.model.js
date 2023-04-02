@@ -23,6 +23,10 @@ const roomSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  privateCode: {
+    type: String,
+    default: "",
+  },
   signal: {
     type: Number,
     default: 0,
