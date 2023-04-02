@@ -13,7 +13,7 @@ exports.createRoom = async function (room) {
 exports.getRooms = async function (query) {
   try {
     return await Rooms.find(query)
-      .select("name creator dateCreation")
+      .select("name creator dateCreation privateCode")
       .populate({
         path: "creator",
         select: "firstname",
@@ -29,7 +29,7 @@ exports.getRooms = async function (query) {
 exports.getRoom = async function (query) {
   try {
     return await Rooms.findOne({ _id: query })
-      .select("_id name creator messages dateCreation")
+      .select("_id name creator dateCreation privateCode")
       .populate({
         path: "creator",
         select: "firstname",
