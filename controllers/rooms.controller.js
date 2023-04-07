@@ -10,7 +10,6 @@ const socketIO = require("../index");
 //-----------------------------------------------------------------
 exports.getRooms = async function (req, res) {
   const query = req.query.query;
-  /*   console.log(query); */
   try {
     let rooms = await RoomService.getRooms(query);
     // sort rooms by creation date in descending order

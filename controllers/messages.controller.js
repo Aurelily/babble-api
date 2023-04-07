@@ -41,7 +41,6 @@ exports.postMessage = async function (req, res) {
       message: "User Successfully register",
     });
   } catch (e) {
-    console.log(req.body);
     console.log(e);
     return res.status(500).json({ status: 400, message: e.message });
   }

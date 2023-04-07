@@ -23,10 +23,6 @@ const morgan = require("morgan");
 // Environment variables
 require("dotenv").config();
 
-// TODO : Pour l'upload d'images
-const multer = require("multer");
-const upload = multer();
-
 const router = require("./routes/routes");
 const mongoose = require("mongoose");
 // Removes the Deprecation warning
@@ -40,31 +36,19 @@ require("./config/database");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// for parsing multipart/form-data
-app.use(upload.array());
-app.use(express.static("public"));
-
 // to use Morgan in tiny version
 app.use(morgan("tiny"));
 
 // SOCKET.IO
 
-const activeSockets = [];
-
 socketIO.on("connection", (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
-  activeSockets.push(socket.id);
-  socket.emit("user connected", activeSockets);
 
   socket.on("disconnect", () => {
     socket.disconnect();
-    console.log("🔥: A user disconnected");
-    const index = activeSockets.indexOf(socket.id);
-    if (index !== -1) {
-      activeSockets.splice(index, 1);
-      socket.emit("user disconnected", activeSockets);
-    }
+    console.log(`⚡: ${socket.id} user just disconnected!`);
   });
+
   //:JOIN:Client Supplied Room
   socket.on("subscribe", function (room) {
     try {

@@ -26,12 +26,12 @@ exports.createUser = async function (user) {
 exports.getUsers = async function (query, page, limit) {
   try {
     return await User.find(query)
-      .select("firstname lastname")
+      .select("firstname lastname email avatarPath")
       .limit(limit)
       .skip(limit * page);
   } catch (e) {
     // Log Errors
-    console.log(e);
+    console.log(e).message;
     throw Error("Error while Paginating Users");
   }
 };
@@ -39,7 +39,7 @@ exports.getUsers = async function (query, page, limit) {
 exports.getUser = async function (query) {
   try {
     return await User.findOne({ _id: query }).select(
-      "firstname lastname email"
+      "firstname lastname email avatarPath"
     );
   } catch (e) {
     // Log Errors

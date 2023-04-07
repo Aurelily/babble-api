@@ -16,10 +16,6 @@ router.get("/", auth, userController.getUsers);
 router.get("/details/:id", auth, userController.getUser);
 router.put("/update/profil", auth, userController.updateProfil);
 
-/* router.put("/update/profil", auth, (req, res) => {
-  console.log("Router");
-}); */
-
 // /users - Routes accessibles seulement aux admins
 router.put("/update/:id", authAdmin, userController.updateById);
 router.delete("/delete/:id", authAdmin, userController.deleteUserById);

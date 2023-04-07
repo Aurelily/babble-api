@@ -1,9 +1,12 @@
 const UserService = require("../services/users.services");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-
 require("dotenv").config();
+
+//Pour utiliser les emit de socket coté serveur
+const socketIO = require("../index");
+
+const activesUsersList = [];
 
 //-----------------------------------------------------------------
 // GET users/ - Retourne tous les utilisateur dans une liste avec nom et prénom (User Connecté + admin)
@@ -47,9 +50,6 @@ exports.getUser = async function (req, res, next) {
 //-----------------------------------
 
 exports.upload = async function (req, res) {
-  /* console.log(req); */
-  /* console.log(req.file); */
-  console.log(req.body);
   const img = req.body.avatarPath;
   if (!img) {
     console.log("no image");
@@ -91,8 +91,7 @@ exports.register = async function (req, res) {
       .status(200)
       .json({ status: 200, data: user, message: "User Successfully register" });
   } catch (e) {
-    console.log(req.body);
-    console.log(e);
+    console.log(e.message);
     return res.status(500).json({ status: 400, message: e.message });
   }
 };
@@ -104,7 +103,6 @@ exports.register = async function (req, res) {
 exports.login = async function (req, res) {
   try {
     let user = await UserService.getUserByEmail(req.body.email);
-    console.log(user);
     if (await user.comparePassword(req.body.password)) {
       // save user token
       user.token = jwt.sign(
@@ -123,6 +121,7 @@ exports.login = async function (req, res) {
       );
 
       user.update({ token: user.token, refresh_token: user.refresh_token });
+
       return res.status(200).json({
         status: 200,
         data: user,
