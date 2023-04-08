@@ -39,6 +39,9 @@ app.use(express.urlencoded({ extended: true }));
 // to use Morgan in tiny version
 app.use(morgan("tiny"));
 
+// Users online list
+const userOnlineList = [];
+
 // SOCKET.IO
 
 socketIO.on("connection", (socket) => {
@@ -69,6 +72,34 @@ socketIO.on("connection", (socket) => {
     } catch (e) {
       console.log([socket.id], "leave room :", e);
       socket.emit("error", "couldnt perform requested action");
+    }
+  });
+  //:USER ID CONNECTED:
+  socket.on("newUserConnected", function (userId) {
+    try {
+      console.log("l'id connecté est : " + userId);
+      let userIndex = userOnlineList.indexOf(userId);
+      if (userIndex === -1) {
+        userOnlineList.push(userId);
+      }
+      console.log("API list users connect : " + userOnlineList);
+      socket.emit("userOnlineList", userOnlineList);
+    } catch (e) {
+      console.log(e.message);
+    }
+  });
+  //:USER ID LOGOUT:
+  socket.on("userLogout", function (userId) {
+    try {
+      console.log("l'id logout est : " + userId);
+      let userIndex = userOnlineList.indexOf(userId);
+      if (userIndex !== -1) {
+        userOnlineList.splice(userIndex, 1);
+      }
+      console.log("API list users connect : " + userOnlineList);
+      socket.emit("userOnlineList", userOnlineList);
+    } catch (e) {
+      console.log(e.message);
     }
   });
 });
