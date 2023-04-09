@@ -18,6 +18,7 @@ exports.getUsers = async function (req, res, next) {
   const query = req.query.query;
   try {
     let users = await UserService.getUsers(query, page, limit);
+    /*    socketIO.emit("updateUsersList", users); */
     return res.status(200).json({
       status: 200,
       data: users,
