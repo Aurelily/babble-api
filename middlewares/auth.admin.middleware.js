@@ -15,11 +15,13 @@ module.exports = async (req, res, next) => {
   try {
     // Verify the JWT token using the secret key
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    /* console.log(decoded); */
     req.user = decoded; // Attach the decoded user object to the request object
-    req.userId = decoded.userId;
-    req.email = decoded.email;
-    req.isAdmin = true;
-    next(); // Move to the next middleware
+    if (decoded.isAdmin) {
+      next(); // Move to the next middleware
+    } else {
+      return res.status(403).json({ message: "Vous n'êtes pas admin" });
+    }
   } catch (error) {
     // If the token is invalid or has expired, return a 403 Forbidden error
     return res

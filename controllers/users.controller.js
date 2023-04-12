@@ -3,13 +3,8 @@ const validator = require("validator");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-//Pour utiliser les emit de socket coté serveur
-const socketIO = require("../index");
-
-const activesUsersList = [];
-
 //-----------------------------------------------------------------
-// GET users/ - Retourne tous les utilisateur dans une liste avec nom et prénom (User Connecté + admin)
+// GET users/ - Returns all registered users in database
 //-----------------------------------------------------------------
 exports.getUsers = async function (req, res, next) {
   // Validate request parameters, queries using express-validator
@@ -18,11 +13,10 @@ exports.getUsers = async function (req, res, next) {
   const query = req.query.query;
   try {
     let users = await UserService.getUsers(query, page, limit);
-    /*    socketIO.emit("updateUsersList", users); */
     return res.status(200).json({
       status: 200,
       data: users,
-      message: "Successfully Users Retrieved",
+      message: "Liste des utilisateurs récupérée.",
     });
   } catch (e) {
     return res.status(400).json({ status: 400, message: e.message });
@@ -30,7 +24,7 @@ exports.getUsers = async function (req, res, next) {
 };
 
 //-----------------------------------------------------------------
-// GET users/details/:id - Retourne les détails d'un utilisateur : nom, prénom, email (User Connecté + admin)
+// GET users/details/:id - Return one user detail : firstname, lastname, email, avatarPath
 //-----------------------------------------------------------------
 exports.getUser = async function (req, res, next) {
   const { id } = req.params;
@@ -39,7 +33,7 @@ exports.getUser = async function (req, res, next) {
     return res.status(200).json({
       status: 200,
       data: user,
-      message: "Successfully User Retrieved",
+      message: "Informations utilisateur récupérée.",
     });
   } catch (e) {
     return res.status(400).json({ status: 400, message: e.message });
@@ -47,20 +41,7 @@ exports.getUser = async function (req, res, next) {
 };
 
 //-----------------------------------
-// POST users/upload - Upload de l'avatar d'un utilisateur sur Cloudinary (User non connecté)
-//-----------------------------------
-
-exports.upload = async function (req, res) {
-  const img = req.body.avatarPath;
-  if (!img) {
-    console.log("no image");
-  }
-
-  res.send({ congrats: "data recieved CONT" });
-};
-
-//-----------------------------------
-// POST users/register - Enregistrement d'un utilisateur (User non connecté)
+// POST users/register - register a user
 //-----------------------------------
 
 exports.register = async function (req, res) {
@@ -69,7 +50,7 @@ exports.register = async function (req, res) {
     if (userTest) {
       return res.status(409).json({
         status: 409,
-        message: "This email already has an account.",
+        message: "Ce mail possède déjà un compte Babble !",
       });
     }
 
@@ -77,20 +58,22 @@ exports.register = async function (req, res) {
       return res.status(500).json({
         status: 500,
         message:
-          "Your password must contains at least minimum 8 character, 1 lowercase, 1 uppercase, 1 number and 1 symbols",
+          "Votre mot de passe doit contenir au moins 8 caractères, 1 minuscule, 1 majuscule, 1 chiffre et un caractère spécial.",
       });
 
     if (!validator.isEmail(req.body.email))
       return res.status(500).json({
         status: 500,
-        message: "Email is not a valid format !",
+        message: "Cet email n'a pas un format valide!",
       });
 
     let user = await UserService.createUser(req.body);
 
-    return res
-      .status(200)
-      .json({ status: 200, data: user, message: "User Successfully register" });
+    return res.status(200).json({
+      status: 200,
+      data: user,
+      message: "Vous êtes bien enregistré sur Babble.",
+    });
   } catch (e) {
     console.log(e.message);
     return res.status(500).json({ status: 400, message: e.message });
@@ -98,7 +81,7 @@ exports.register = async function (req, res) {
 };
 
 //-----------------------------------
-// POST users/login - Login d'un utilisateur (User non connecté)
+// POST users/login - Login a user
 //-----------------------------------
 
 exports.login = async function (req, res) {
@@ -107,14 +90,13 @@ exports.login = async function (req, res) {
     if (await user.comparePassword(req.body.password)) {
       // save user token
       user.token = jwt.sign(
-        { userId: user._id, /* email: user.email, */ isAdmin: user.isAdmin },
+        { userId: user._id, isAdmin: user.isAdmin },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
       );
       user.refresh_token = jwt.sign(
         {
           userId: user._id,
-          /*  email: user.email, */
           isAdmin: user.isAdmin,
         },
         process.env.JWT_REFRESH_TOKEN,
@@ -126,61 +108,68 @@ exports.login = async function (req, res) {
       return res.status(200).json({
         status: 200,
         data: user,
-        message: "User Successfully logged in",
+        message: "Vous êtes bien connecté à Babble.",
       });
     } else if (user.comparePassword(req.body.password) == null) {
       return res.status(400).json({
         status: 400,
-        message: "Login or password incorrect",
+        message: "L'email ou le mot de passe est incorrect.",
       });
     }
-    return res
-      .status(500)
-      .json({ status: 400, message: "password is incorrect" });
+    return res.status(500).json({
+      status: 400,
+      message: "L'email ou le mot de passe est incorrect.",
+    });
   } catch (e) {
     return res.status(400).json({ status: 400, message: e.message });
   }
 };
 
 //-----------------------------------
-// PUT users/update/:id - Update d'un utilisateur par son ID (params) (Admin)
+// PUT users/update/:id - Update information from a user
 //-----------------------------------
 exports.updateById = async function (req, res) {
   try {
     const { id } = req.params;
     const { firstname, lastname, email } = req.body;
     let user = await UserService.updateUser(id, req.body);
-    return res
-      .status(200)
-      .json({ status: 200, data: user, message: "User Successfully updated" });
+    return res.status(200).json({
+      status: 200,
+      data: user,
+      message: "Vos informations sont bien mises à jour.",
+    });
   } catch (e) {
     return res.status(500).json({ status: 400, message: e.message });
   }
 };
 
 //--------------------------------------
-// DELETE users/delete/:id - Supprimer un utilisateur par son ID (params) (Admin)
+// DELETE users/delete/:id - Delete a user
 //--------------------------------------
 
 exports.deleteUserById = async function (req, res) {
   try {
     const { id } = req.params;
     let user = await UserService.deleteUser(id);
-    return res
-      .status(200)
-      .json({ status: 200, data: user, message: "User Successfully deleted" });
+    return res.status(200).json({
+      status: 200,
+      data: user,
+      message: "L'utilisateur est bien supprimé.",
+    });
   } catch (e) {
     return res.status(500).json({ status: 400, message: e.message });
   }
 };
 
 //-----------------------------------
-// PUT users/update/profil/ - Update de son profil connecté (via JWT) (Utilisateur connecté)
+// PUT users/update/profil/ - Update connected user profil with JWT
 //-----------------------------------
 exports.updateProfil = async function (req, res) {
   try {
     if (!req.body)
-      return res.status(400).json({ status: 400, message: "Invalid request" });
+      return res
+        .status(400)
+        .json({ status: 400, message: "Requête invalide." });
 
     let userConnected = await UserService.getUser(req.body._id);
     let userTest = await UserService.getUserByEmail(req.body.email);
@@ -188,7 +177,7 @@ exports.updateProfil = async function (req, res) {
     if (userTest && req.body.email !== userConnected.email) {
       return res.status(409).json({
         status: 409,
-        message: "This email already has an account.",
+        message: "Cet email possède déjà un compte.",
       });
     }
 
@@ -196,20 +185,22 @@ exports.updateProfil = async function (req, res) {
       return res.status(500).json({
         status: 500,
         message:
-          "Your password must contains at least minimum 8 character, 1 lowercase, 1 uppercase, 1 number and 1 symbols",
+          "Votre mot de passe doit contenir au moins 8 caractères, 1 minuscule, 1 majuscule, 1 chiffre et un caractère spécial.",
       });
 
     if (!validator.isEmail(req.body.email))
       return res.status(500).json({
         status: 500,
-        message: "Email is not a valid format !",
+        message: "Cet email n'a pas un format valide!",
       });
 
     let user = await UserService.updateUser(userConnected._id, req.body);
 
-    return res
-      .status(200)
-      .json({ status: 200, data: user, message: "User Successfully updated" });
+    return res.status(200).json({
+      status: 200,
+      data: user,
+      message: "Vos informations sont mises à jour.",
+    });
   } catch (e) {
     return res.status(500).json({ status: 400, message: e.message });
   }

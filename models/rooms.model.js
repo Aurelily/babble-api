@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const autopopulate = require("mongoose-autopopulate");
 
-const Users = require("./users.model");
-
 const roomSchema = mongoose.Schema({
   name: {
     type: String,
@@ -26,10 +24,6 @@ const roomSchema = mongoose.Schema({
   privateCode: {
     type: String,
     default: "",
-  },
-  signal: {
-    type: Number,
-    default: 0,
   },
 });
 

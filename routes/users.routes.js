@@ -4,11 +4,9 @@ const userController = require("../controllers/users.controller");
 
 const auth = require("../middlewares/auth.middleware");
 const authAdmin = require("../middlewares/auth.admin.middleware");
-const multer = require("../middlewares/multer.middleware");
 
 // /users - Routes accessibles aux users non connectés
 router.post("/register", userController.register);
-router.post("/upload", multer, userController.upload);
 router.post("/login", userController.login);
 
 // /users - Routes accessibles seulement aux users connectés + admins

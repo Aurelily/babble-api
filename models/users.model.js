@@ -37,15 +37,12 @@ const userSchema = new Schema({
     type: mongoose.Schema.Types.Mixed,
     default: "avatar-0.png",
   },
+  dateCreation: {
+    type: Date,
+    default: Date.now,
+  },
   token: String,
   refresh_token: String,
-
-  // Le isOnline sera géré via le web socket
-  /*   isOnline: {
-    type: Boolean,
-    required: true,
-    default: false,
-  }, */
 });
 
 userSchema.methods.comparePassword = async function (candidatePassword) {

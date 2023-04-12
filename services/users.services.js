@@ -1,12 +1,11 @@
 const User = require("../models/users.model");
-const bcrypt = require("bcrypt");
 
 exports.UploadAvatar = async function (req, res) {
   try {
     return await User.create(user);
   } catch (e) {
     // Log Errors
-    throw Error("Error while creating user: " + e);
+    throw Error("Erreur à la création d'un utilisateur: " + e);
   }
 };
 
@@ -19,7 +18,7 @@ exports.createUser = async function (user) {
     return await User.create(user);
   } catch (e) {
     // Log Errors
-    throw Error("Error while creating user: " + e);
+    throw Error("Erreur à la création d'un utilisateur:" + e);
   }
 };
 
@@ -32,7 +31,7 @@ exports.getUsers = async function (query, page, limit) {
   } catch (e) {
     // Log Errors
     console.log(e).message;
-    throw Error("Error while Paginating Users");
+    throw Error("Erreur dans la récupération de la liste d'utilisateurs.");
   }
 };
 
@@ -43,7 +42,9 @@ exports.getUser = async function (query) {
     );
   } catch (e) {
     // Log Errors
-    throw Error("Error while getting user");
+    throw Error(
+      "Erreur dans la récupération des informations de l'utilisateur."
+    );
   }
 };
 

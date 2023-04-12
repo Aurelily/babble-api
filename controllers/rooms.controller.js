@@ -1,12 +1,13 @@
 const RoomService = require("../services/rooms.services");
 const UserService = require("../services/users.services");
+
 require("dotenv").config();
 
-//Pour utiliser les emit de socket coté serveur
+// To emit socket
 const socketIO = require("../index");
 
 //-----------------------------------------------------------------
-// GET rooms/ - Retourne toutes les rooms du channel général dans une liste (User Connecté + admin)
+// GET rooms/ - Return rooms list
 //-----------------------------------------------------------------
 exports.getRooms = async function (req, res) {
   const query = req.query.query;
@@ -17,7 +18,7 @@ exports.getRooms = async function (req, res) {
     return res.status(200).json({
       status: 200,
       data: rooms,
-      message: "Successfully Rooms Retrieved",
+      message: "Liste des salons récupérée avec succès.",
     });
   } catch (e) {
     return res.status(400).json({ status: 400, message: e.message });
@@ -25,7 +26,7 @@ exports.getRooms = async function (req, res) {
 };
 
 //-----------------------------------------------------------------
-// GET rooms/details/:id - Retourne les détails d'une room : id, name, creator, messages, dateCreation (User Connecté + admin)
+// GET rooms/details/:id - Return a room details :
 //-----------------------------------------------------------------
 exports.getRoom = async function (req, res, next) {
   const { id } = req.params;
@@ -34,7 +35,7 @@ exports.getRoom = async function (req, res, next) {
     return res.status(200).json({
       status: 200,
       data: room,
-      message: "Successfully Room Retrieved",
+      message: "Informations sur le salon récupérées avec succès.",
     });
   } catch (e) {
     return res.status(400).json({ status: 400, message: e.message });
@@ -42,7 +43,7 @@ exports.getRoom = async function (req, res, next) {
 };
 
 //-----------------------------------
-// POST rooms/post - Création d'un message dans le chat général (User connecté)
+// POST rooms/post - Create a room
 //-----------------------------------
 
 exports.createRoom = async function (req, res) {
@@ -54,7 +55,7 @@ exports.createRoom = async function (req, res) {
     return res.status(200).json({
       status: 200,
       data: room,
-      message: "Room Successfully create",
+      message: "Salon crée avec succès.",
     });
   } catch (e) {
     return res.status(500).json({ status: 400, message: e.message });
@@ -62,7 +63,7 @@ exports.createRoom = async function (req, res) {
 };
 
 //--------------------------------------
-// DELETE rooms/delete/:id - Supprimer une room par son ID (params) (Utilisateur connecté et auteur)
+// DELETE rooms/delete/:id - Delete a room
 //--------------------------------------
 
 exports.deleteRoomById = async function (req, res) {
@@ -72,7 +73,7 @@ exports.deleteRoomById = async function (req, res) {
     socketIO.emit("deleteRoom", room);
     return res
       .status(200)
-      .json({ status: 200, data: room, message: "Room Successfully deleted" });
+      .json({ status: 200, data: room, message: "Salon supprimé." });
   } catch (e) {
     return res.status(500).json({ status: 400, message: e.message });
   }

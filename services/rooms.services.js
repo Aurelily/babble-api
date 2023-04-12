@@ -6,7 +6,7 @@ exports.createRoom = async function (room) {
     return await Rooms.create(room);
   } catch (e) {
     // Log Errors
-    throw Error("Error while creating room: " + e);
+    throw Error("Erreur à la création du salon: " + e);
   }
 };
 
@@ -22,7 +22,7 @@ exports.getRooms = async function (query) {
   } catch (e) {
     // Log Errors
     console.log(e);
-    throw Error("Error while Paginating rooms");
+    throw Error("Erreur à la récupération de la liste de salons.");
   }
 };
 
@@ -37,7 +37,7 @@ exports.getRoom = async function (query) {
       });
   } catch (e) {
     // Log Errors
-    throw Error("Error while getting room infos");
+    throw Error("Erreur à la récupération des informations du salon.");
   }
 };
 

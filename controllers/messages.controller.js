@@ -2,11 +2,11 @@ const MessageService = require("../services/messages.services");
 require("dotenv").config();
 const UserService = require("../services/users.services");
 
-//Pour utiliser les emit de socket coté serveur
+// To emit socket
 const socketIO = require("../index");
 
 //-----------------------------------------------------------------
-// GET messages/ - Retourne tous les messages du channel général dans une liste avec id_room, content, author et datePublished (User Connecté + admin)
+// GET messages/ - Return all messages
 //-----------------------------------------------------------------
 exports.getMessages = async function (req, res, next) {
   // Validate request parameters, queries using express-validator
@@ -18,7 +18,7 @@ exports.getMessages = async function (req, res, next) {
     return res.status(200).json({
       status: 200,
       data: messages,
-      message: "Successfully Messages Retrieved",
+      message: "Messages récupérés avec succès.",
     });
   } catch (e) {
     return res.status(400).json({ status: 400, message: e.message });
@@ -26,7 +26,7 @@ exports.getMessages = async function (req, res, next) {
 };
 
 //-----------------------------------
-// POST messages/create - Création d'un message dans le chat général (User connecté)
+// POST messages/create - Post a message
 //-----------------------------------
 
 exports.postMessage = async function (req, res) {
@@ -38,7 +38,7 @@ exports.postMessage = async function (req, res) {
     return res.status(200).json({
       status: 200,
       data: message,
-      message: "User Successfully register",
+      message: "Message posté avec succès.",
     });
   } catch (e) {
     console.log(e);
@@ -47,7 +47,7 @@ exports.postMessage = async function (req, res) {
 };
 
 //--------------------------------------
-// GET messages/:roomId - Supprimer un message par son ID (params) (Admin)
+// GET messages/:roomId - Get message by room id
 //--------------------------------------
 
 exports.getMessagesByRoomId = async function (req, res) {
@@ -65,7 +65,7 @@ exports.getMessagesByRoomId = async function (req, res) {
 };
 
 //--------------------------------------
-// DELETE messages/delete/:id - Supprimer un message par son ID (params) (Admin)
+// DELETE messages/delete/:id - Delete a message
 //--------------------------------------
 
 exports.deleteMessageById = async function (req, res) {

@@ -1,12 +1,11 @@
 const Message = require("../models/messages.model");
-const User = require("../models/users.model");
 
 exports.createMessage = async function (message) {
   try {
     return await Message.create(message);
   } catch (e) {
     // Log Errors
-    throw Error("Error while creating message: " + e);
+    throw Error("Erreur à la création d'un message: " + e);
   }
 };
 
@@ -32,7 +31,7 @@ exports.getMessages = async function (req, res, next) {
     return res.status(200).json({
       status: 200,
       data: messages,
-      message: "Successfully Messages Retrieved",
+      message: "Messages récéupérés avec succès.",
     });
   } catch (e) {
     return res.status(400).json({ status: 400, message: e.message });
@@ -50,7 +49,7 @@ exports.getMessagesByRoomId = async function (param) {
       });
   } catch (e) {
     // Log Errors
-    throw Error("Error while getting messages for this room");
+    throw Error("Erreur à la récupération des messages de ce salon.");
   }
 };
 
@@ -65,7 +64,7 @@ exports.getMessage = async function (query) {
       });
   } catch (e) {
     // Log Errors
-    throw Error("Error while getting message");
+    throw Error("Erreur à la récupération de ce message.");
   }
 };
 
@@ -83,6 +82,6 @@ exports.updateMessage = async function (query, body) {
     return await Message.findOneAndUpdate({ _id: query }, body, { new: true });
   } catch (e) {
     // Log Errors
-    throw Error("Error while updating user");
+    throw Error("Erreur à la mise à jour du message.");
   }
 };

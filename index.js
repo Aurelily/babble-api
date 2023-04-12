@@ -2,6 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
+// Desactive erreurs jaunes A ENLEVER
+console.disableYellowBox = true;
+
 // Server
 const http = require("http").Server(app);
 
@@ -48,7 +51,6 @@ socketIO.on("connection", (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
 
   socket.on("disconnect", () => {
-    /* socket.disconnect(); */
     console.log(`⚡: ${socket.id} user just disconnected!`);
   });
 
@@ -72,34 +74,6 @@ socketIO.on("connection", (socket) => {
     } catch (e) {
       console.log([socket.id], "leave room :", e);
       socket.emit("error", "couldnt perform requested action");
-    }
-  });
-  //:USER ID CONNECTED:
-  socket.on("newUserConnected", function (userId) {
-    try {
-      console.log("l'id connecté est : " + userId);
-      let userIndex = userOnlineList.indexOf(userId);
-      if (userIndex === -1) {
-        userOnlineList.push(userId);
-      }
-      console.log("API list users connect : " + userOnlineList);
-      socket.emit("userOnlineList", userOnlineList);
-    } catch (e) {
-      console.log(e.message);
-    }
-  });
-  //:USER ID LOGOUT:
-  socket.on("userLogout", function (userId) {
-    try {
-      console.log("l'id logout est : " + userId);
-      let userIndex = userOnlineList.indexOf(userId);
-      if (userIndex !== -1) {
-        userOnlineList.splice(userIndex, 1);
-      }
-      console.log("API list users connect : " + userOnlineList);
-      socket.emit("userOnlineList", userOnlineList);
-    } catch (e) {
-      console.log(e.message);
     }
   });
 });
