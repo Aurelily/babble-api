@@ -9,10 +9,23 @@ console.disableYellowBox = true;
 const http = require("http").Server(app);
 
 // SocketIO
+/* const socketIO = require("socket.io")(http, {
+  cors: {
+    origin: "http://" + process.env.SERVER_IP + ":3000",
+  },
+}); */
 const socketIO = require("socket.io")(http, {
   cors: {
-    /* origin: "http://" + process.env.SERVER_IP + ":3000", */
-    origin: "https://babble-api-git-main-aurelily.vercel.app",
+    origin: (origin, callback) => {
+      // Vérifier si le domaine est autorisé
+      if (
+        ["https://babble-api-git-main-aurelily.vercel.app"].includes(origin)
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
   },
 });
 
