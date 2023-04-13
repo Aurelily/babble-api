@@ -11,7 +11,8 @@ const http = require("http").Server(app);
 // SocketIO
 const socketIO = require("socket.io")(http, {
   cors: {
-    origin: "http://" + process.env.SERVER_IP + ":3000",
+    /* origin: "http://" + process.env.SERVER_IP + ":3000", */
+    origin: "https://happy-cow-express-git-main-aurelily.vercel.app/",
   },
 });
 
