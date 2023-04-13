@@ -12,7 +12,7 @@ const http = require("http").Server(app);
 const socketIO = require("socket.io")(http, {
   cors: {
     /* origin: "http://" + process.env.SERVER_IP + ":3000", */
-    origin: "https://happy-cow-express-git-main-aurelily.vercel.app/",
+    origin: "https://babble-api-git-main-aurelily.vercel.app",
   },
 });
 
