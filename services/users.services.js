@@ -25,7 +25,7 @@ exports.createUser = async function (user) {
 exports.getUsers = async function (query, page, limit) {
   try {
     return await User.find(query)
-      .select("firstname lastname email avatarPath")
+      .select("firstname lastname email isAdmin avatarPath dateCreation")
       .limit(limit)
       .skip(limit * page);
   } catch (e) {
@@ -38,7 +38,7 @@ exports.getUsers = async function (query, page, limit) {
 exports.getUser = async function (query) {
   try {
     return await User.findOne({ _id: query }).select(
-      "firstname lastname email avatarPath"
+      "firstname lastname email isAdmin avatarPath dateCreation"
     );
   } catch (e) {
     // Log Errors

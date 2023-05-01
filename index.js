@@ -13,14 +13,12 @@ const http = require("http").Server(app);
   cors: {
     origin: "http://" + process.env.SERVER_IP + ":3000",
   },
-}); */
+});  */
 const socketIO = require("socket.io")(http, {
   cors: {
     origin: (origin, callback) => {
       // Vérifier si le domaine est autorisé
-      if (
-        ["https://babble-api-git-main-aurelily.vercel.app"].includes(origin)
-      ) {
+      if (["https://api.aureliepreaud.me/"].includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
@@ -33,6 +31,13 @@ module.exports = socketIO;
 
 // This line benefits from "Cors" to all the requests of our server
 app.use(cors());
+
+// Welcome Api home page
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Welcome to BABBLE API",
+  });
+});
 
 // Morgan is a logger to trace the http requests in the console
 const morgan = require("morgan");
