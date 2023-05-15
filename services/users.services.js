@@ -21,11 +21,10 @@ exports.createUser = async function (user) {
     throw Error("Erreur à la création d'un utilisateur:" + e);
   }
 };
-
 exports.getUsers = async function (query, page, limit) {
   try {
     return await User.find(query)
-      .select("firstname lastname email isAdmin avatarPath dateCreation")
+      .select("firstname lastname email isAdmin  avatarPath dateCreation")
       .limit(limit)
       .skip(limit * page);
   } catch (e) {
@@ -38,7 +37,7 @@ exports.getUsers = async function (query, page, limit) {
 exports.getUser = async function (query) {
   try {
     return await User.findOne({ _id: query }).select(
-      "firstname lastname email isAdmin avatarPath dateCreation"
+      "firstname lastname email isAdmin  avatarPath"
     );
   } catch (e) {
     // Log Errors

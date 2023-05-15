@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-// TEST GIT HUB 15/05/2023
 
 // Desactive erreurs jaunes A ENLEVER
 console.disableYellowBox = true;
@@ -19,7 +18,9 @@ const socketIO = require("socket.io")(http, {
   cors: {
     origin: (origin, callback) => {
       // Vérifier si le domaine est autorisé
-      if (["https://api.aureliepreaud.me"].includes(origin)) {
+      if (
+        ["https://api.aureliepreaud.me"].includes(origin)
+      ) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
@@ -32,11 +33,13 @@ module.exports = socketIO;
 
 // This line benefits from "Cors" to all the requests of our server
 app.use(cors());
-app.get("/", (req, res) => {
-  res.status(200).json({
-    message: "Welcome on the api",
-  });
+app.get('/', (req, res) => {
+	
+res.status(200).json({
+	message: "Welcome on the api"
 });
+
+})
 
 // Morgan is a logger to trace the http requests in the console
 const morgan = require("morgan");
