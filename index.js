@@ -1,4 +1,5 @@
 const express = require("express");
+import helmet from "helmet";
 const cors = require("cors");
 const app = express();
 // TEST GIT HUB 15/05/2023
@@ -29,6 +30,9 @@ const socketIO = require("socket.io")(http, {
 });
 
 module.exports = socketIO;
+
+// Use Helmet!
+app.use(helmet());
 
 // This line benefits from "Cors" to all the requests of our server
 app.use(cors());
