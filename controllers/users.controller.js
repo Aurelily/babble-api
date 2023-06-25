@@ -3,6 +3,9 @@ const validator = require("validator");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+// To emit socket
+const socketIO = require("../index");
+
 //-----------------------------------------------------------------
 // GET users/ - Returns all registered users in database
 //-----------------------------------------------------------------
@@ -151,6 +154,7 @@ exports.deleteUserById = async function (req, res) {
   try {
     const { id } = req.params;
     let user = await UserService.deleteUser(id);
+    socketIO.emit("deleteUser", user);
     return res.status(200).json({
       status: 200,
       data: user,

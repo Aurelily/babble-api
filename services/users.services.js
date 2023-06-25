@@ -1,4 +1,6 @@
 const User = require("../models/users.model");
+const Rooms = require("../models/rooms.model");
+const Messages = require("../models/messages.model");
 
 exports.UploadAvatar = async function (req, res) {
   try {
@@ -60,6 +62,8 @@ exports.getUserByEmail = async function (filter) {
 
 exports.deleteUser = async function (param) {
   try {
+    await Messages.deleteMany({ id_author: param });
+    await Rooms.deleteMany({ creator: param });
     return await User.findByIdAndDelete({ _id: param });
   } catch (e) {
     // Log Errors
